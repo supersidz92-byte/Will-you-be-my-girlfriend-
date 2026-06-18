@@ -1,0 +1,404 @@
+<!index.html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Will You Be My Girlfriend? 💖</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    background:linear-gradient(135deg,#ffb6d9,#ffd6ea,#ffe6f2);
+    min-height:100vh;
+    overflow:hidden;
+}
+
+.page{
+    display:none;
+    min-height:100vh;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
+
+.page.active{
+    display:flex;
+}
+
+.card{
+    width:100%;
+    max-width:700px;
+    background:rgba(255,255,255,.95);
+    backdrop-filter:blur(10px);
+    border-radius:30px;
+    padding:40px;
+    text-align:center;
+    box-shadow:0 20px 60px rgba(255,105,180,.25);
+}
+
+h1{
+    color:#ff4d8d;
+    margin-bottom:15px;
+}
+
+.subtitle{
+    color:#666;
+    margin-bottom:30px;
+}
+
+.buttons{
+    position:relative;
+    height:220px;
+    margin-top:20px;
+}
+
+button{
+    border:none;
+    cursor:pointer;
+    border-radius:50px;
+    padding:15px 28px;
+    font-size:16px;
+    font-weight:600;
+}
+
+.yes-btn{
+    background:#ff4d8d;
+    color:white;
+    box-shadow:0 10px 30px rgba(255,77,141,.4);
+    transition:.25s;
+}
+
+.yes-btn:hover{
+    transform:scale(1.08);
+}
+
+.no-btn{
+    position:fixed;
+    background:#ececec;
+    color:#333;
+    z-index:999;
+    transition:
+        left .06s linear,
+        top .06s linear,
+        transform .06s linear,
+        opacity .15s linear;
+}
+
+input,
+select{
+    width:100%;
+    padding:14px;
+    margin-bottom:18px;
+    border-radius:12px;
+    border:2px solid #ffd1e6;
+    outline:none;
+}
+
+.continue-btn{
+    width:100%;
+    background:#ff4d8d;
+    color:white;
+}
+
+.summary-card{
+    background:#fff0f8;
+    border:2px solid #ffd1e6;
+    border-radius:20px;
+    padding:25px;
+    text-align:left;
+    margin-top:20px;
+}
+
+.summary-card h2{
+    color:#ff4d8d;
+    margin-bottom:10px;
+}
+
+.floating-heart{
+    position:fixed;
+    color:#ff4d8d;
+    pointer-events:none;
+    animation:floatUp 4s linear infinite;
+    opacity:.35;
+}
+
+@keyframes floatUp{
+    from{
+        transform:translateY(100vh);
+    }
+    to{
+        transform:translateY(-120px);
+    }
+}
+
+.cursor-heart{
+    position:fixed;
+    pointer-events:none;
+    z-index:99999;
+    animation:cursorFade 1.3s linear forwards;
+}
+
+@keyframes cursorFade{
+    from{
+        opacity:1;
+        transform:translateY(0) scale(1);
+    }
+    to{
+        opacity:0;
+        transform:translateY(-50px) scale(.3);
+    }
+}
+
+.confetti{
+    position:fixed;
+    pointer-events:none;
+    animation:confettiFall 2.5s linear forwards;
+}
+
+@keyframes confettiFall{
+    from{
+        transform:translateY(-100px) rotate(0deg);
+        opacity:1;
+    }
+    to{
+        transform:translateY(110vh) rotate(720deg);
+        opacity:0;
+    }
+}
+</style>
+</head>
+<body>
+
+<!-- PAGE 1 -->
+<div class="page active" id="page1">
+    <div class="card">
+        <h1>💖 Will You Be My Girlfriend? 💖</h1>
+
+        <p class="subtitle">
+            Every day feels brighter with you.
+            So... will you be my girlfriend? 🥰
+        </p>
+
+        <div class="buttons">
+            <button class="yes-btn" onclick="acceptLove()">
+                Yes I Do 💕
+            </button>
+
+            <button id="noBtn" class="no-btn">
+                No, leave me alone
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- PAGE 2 -->
+<div class="page" id="page2">
+    <div class="card">
+
+        <h1>💌 Let's Plan Our Date</h1>
+
+        <input type="date" id="date">
+
+        <input type="time" id="time">
+
+        <select id="activity">
+            <option>🍕 Pizza Date</option>
+            <option>🇬🇧 London Trip</option>
+            <option>🎬 Movie Night</option>
+        </select>
+
+        <button class="continue-btn" onclick="createDateCard()">
+            Continue ❤️
+        </button>
+
+    </div>
+</div>
+
+<!-- PAGE 3 -->
+<div class="page" id="page3">
+    <div class="card">
+
+        <h1>🥰 Our Date Schedule</h1>
+
+        <div class="summary-card">
+            <h2 id="sumActivity"></h2>
+            <p id="sumDate"></p>
+            <p id="sumTime"></p>
+        </div>
+
+        <br>
+
+        <p>
+            Can't wait to spend time together 💖
+        </p>
+
+    </div>
+</div>
+
+<script>
+
+function showPage(page){
+    document.querySelectorAll('.page')
+    .forEach(p=>p.classList.remove('active'));
+
+    document.getElementById(page)
+    .classList.add('active');
+}
+
+/* Floating background hearts */
+for(let i=0;i<25;i++){
+
+    const h=document.createElement('div');
+    h.className='floating-heart';
+    h.innerHTML='💖';
+
+    h.style.left=Math.random()*100+'vw';
+    h.style.fontSize=(15+Math.random()*25)+'px';
+    h.style.animationDuration=(4+Math.random()*8)+'s';
+
+    document.body.appendChild(h);
+}
+
+/* Cursor heart trail */
+document.addEventListener('mousemove',(e)=>{
+
+    const heart=document.createElement('div');
+
+    heart.className='cursor-heart';
+    heart.innerHTML='💖';
+
+    heart.style.left=e.pageX+'px';
+    heart.style.top=e.pageY+'px';
+
+    document.body.appendChild(heart);
+
+    setTimeout(()=>{
+        heart.remove();
+    },1300);
+});
+
+/* Confetti */
+function launchConfetti(){
+
+    const icons=['💖','💕','💗','💘','💝','❤️'];
+
+    for(let i=0;i<120;i++){
+
+        const c=document.createElement('div');
+
+        c.className='confetti';
+        c.innerHTML=
+        icons[Math.floor(Math.random()*icons.length)];
+
+        c.style.left=Math.random()*100+'vw';
+        c.style.fontSize=(16+Math.random()*24)+'px';
+
+        document.body.appendChild(c);
+
+        setTimeout(()=>{
+            c.remove();
+        },2500);
+    }
+}
+
+function acceptLove(){
+
+    launchConfetti();
+
+    setTimeout(()=>{
+        showPage('page2');
+    },1200);
+}
+
+/* PAGE 2 -> PAGE 3 */
+function createDateCard(){
+
+    const date=document.getElementById('date').value;
+    const time=document.getElementById('time').value;
+    const activity=document.getElementById('activity').value;
+
+    document.getElementById('sumActivity').innerText=activity;
+    document.getElementById('sumDate').innerText='📅 Date: ' + date;
+    document.getElementById('sumTime').innerText='⏰ Time: ' + time;
+
+    showPage('page3');
+}
+
+/* SUPER IMPOSSIBLE NO BUTTON */
+
+const noBtn=document.getElementById('noBtn');
+
+noBtn.style.left='60%';
+noBtn.style.top='55%';
+
+function randomPosition(){
+
+    const maxX=
+    window.innerWidth-noBtn.offsetWidth-20;
+
+    const maxY=
+    window.innerHeight-noBtn.offsetHeight-20;
+
+    const x=Math.random()*maxX;
+    const y=Math.random()*maxY;
+
+    const rotate=Math.random()*360;
+    const scale=0.7+Math.random()*0.8;
+
+    noBtn.style.left=x+'px';
+    noBtn.style.top=y+'px';
+    noBtn.style.transform=
+    `rotate(${rotate}deg) scale(${scale})`;
+}
+
+document.addEventListener('mousemove',(e)=>{
+
+    const rect=noBtn.getBoundingClientRect();
+
+    const centerX=rect.left+rect.width/2;
+    const centerY=rect.top+rect.height/2;
+
+    const distance=Math.hypot(
+        e.clientX-centerX,
+        e.clientY-centerY
+    );
+
+    if(distance<300){
+        randomPosition();
+    }
+});
+
+noBtn.addEventListener('mouseenter',randomPosition);
+
+setInterval(()=>{
+    randomPosition();
+},100);
+
+setInterval(()=>{
+
+    noBtn.style.opacity='0';
+
+    setTimeout(()=>{
+        randomPosition();
+        noBtn.style.opacity='1';
+    },120);
+
+},1800);
+
+noBtn.addEventListener('mousedown',(e)=>{
+    e.preventDefault();
+    randomPosition();
+});
+
+</script>
+
+</body>
+</html>
